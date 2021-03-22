@@ -114,6 +114,4 @@ class SimilarityFinderTest {
         assertEquals(0.25d, similarity);
     }
 
-
-
 }
