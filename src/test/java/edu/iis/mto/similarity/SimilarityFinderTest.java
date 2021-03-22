@@ -87,4 +87,33 @@ class SimilarityFinderTest {
         assertEquals(0d, similarity);
     }
 
+    @Test
+    public void shouldReturnQuarterWhenSequencesContainTwoTheSameElementsAndTotalLengthIsTen() {
+        // given
+        SearchResult foundResult = SearchResult.builder().withFound(true).build();
+        SearchResult notFoundResult = SearchResult.builder().withFound(false).build();
+        int[] firstSeq = {1, 2, 3, 4};
+        int[] secondSeq = {4, 1, 11, 19, 23, 35};
+
+        SimilarityFinder finder = new SimilarityFinder(((elem, sequence) -> {
+            if(elem == 1)
+                return foundResult;
+            else if (elem == 2)
+                return notFoundResult;
+            else if (elem == 3)
+                return notFoundResult;
+            else if (elem == 4)
+                return foundResult;
+            return null;
+        }));
+
+        // when
+        double similarity = finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        assertEquals(0.25d, similarity);
+    }
+
+
+
 }
