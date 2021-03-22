@@ -173,4 +173,31 @@ class SimilarityFinderTest {
                                                 .getInt(mockSearcher);
         assertEquals(2, actualInvocationCount);
     }
+
+    @Test
+    public void shouldNotInvokeSearchMethodWhenSequencesAreEmpty() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        int[] firstSeq = {};
+        int[] secondSeq = {};
+        SequenceSearcher mockSearcher = new SequenceSearcher() {
+
+            public int invocationCount = 0;
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                ++invocationCount;
+                return null;
+            }
+        };
+        SimilarityFinder finder = new SimilarityFinder(mockSearcher);
+
+        // when
+        finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        int actualInvocationCount = mockSearcher.getClass()
+                                                .getDeclaredField("invocationCount")
+                                                .getInt(mockSearcher);
+        assertEquals(0, actualInvocationCount);
+    }
 }
