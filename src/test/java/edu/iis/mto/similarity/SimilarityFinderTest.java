@@ -253,7 +253,9 @@ class SimilarityFinderTest {
         finder.calculateJackardSimilarity(firstSeq, secondSeq);
 
         // then
-        List<Integer> firstSequenceAsList = Arrays.stream(firstSeq).boxed().collect(Collectors.toList());
+        List<Integer> firstSequenceAsList = Arrays.stream(firstSeq)
+                                                  .boxed()
+                                                  .collect(Collectors.toList());
         assertTrue(firstSequenceAsList.containsAll(elements) && elements.containsAll(firstSequenceAsList));
     }
 }
