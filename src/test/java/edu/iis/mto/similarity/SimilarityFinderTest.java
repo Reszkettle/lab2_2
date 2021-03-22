@@ -1,15 +1,16 @@
 package edu.iis.mto.similarity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import edu.iis.mto.searcher.SearchResult;
 import edu.iis.mto.searcher.SequenceSearcher;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.sound.midi.Sequence;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimilarityFinderTest {
 
@@ -212,11 +213,15 @@ class SimilarityFinderTest {
 
             @Override
             public SearchResult search(int elem, int[] sequence) {
-                if(elem == 10 || elem == 20 || elem == 30) {
+                if (elem == 10 || elem == 20 || elem == 30) {
                     ++found;
-                    return SearchResult.builder().withFound(true).build();
+                    return SearchResult.builder()
+                                       .withFound(true)
+                                       .build();
                 }
-                return SearchResult.builder().withFound(false).build();
+                return SearchResult.builder()
+                                   .withFound(false)
+                                   .build();
             }
         };
         SimilarityFinder finder = new SimilarityFinder(mockSearcher);
@@ -226,8 +231,29 @@ class SimilarityFinderTest {
 
         // then
         int actualCountOfFoundElements = mockSearcher.getClass()
-                                                .getDeclaredField("found")
-                                                .getInt(mockSearcher);
+                                                     .getDeclaredField("found")
+                                                     .getInt(mockSearcher);
         assertEquals(3, actualCountOfFoundElements);
+    }
+
+    @Test
+    public void shouldInvokeSearchMethodWithElementsFromSequencePassedAsFirstParameterInCalculateJackardSimilarity() {
+        // given
+        int[] firstSeq = {10, 20, 30};
+        int[] secondSeq = {50, 40, 30, 20, 10};
+        List<Integer> elements = new ArrayList<>();
+        SequenceSearcher mockSearcher = (elem, sequence) -> {
+            elements.add(elem);
+            return SearchResult.builder()
+                               .withFound(false)
+                               .build();
+        };
+        SimilarityFinder finder = new SimilarityFinder(mockSearcher);
+        // when
+        finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        List<Integer> firstSequenceAsList = Arrays.stream(firstSeq).boxed().collect(Collectors.toList());
+        assertTrue(firstSequenceAsList.containsAll(elements) && elements.containsAll(firstSequenceAsList));
     }
 }
