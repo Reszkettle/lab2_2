@@ -200,4 +200,34 @@ class SimilarityFinderTest {
                                                 .getInt(mockSearcher);
         assertEquals(0, actualInvocationCount);
     }
+
+    @Test
+    public void shouldFindThreeElementsFromFirstSequenceInSecondSequence() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        int[] firstSeq = {10, 20, 30};
+        int[] secondSeq = {50, 40, 30, 20, 10};
+        SequenceSearcher mockSearcher = new SequenceSearcher() {
+
+            public int found = 0;
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                if(elem == 10 || elem == 20 || elem == 30) {
+                    ++found;
+                    return SearchResult.builder().withFound(true).build();
+                }
+                return SearchResult.builder().withFound(false).build();
+            }
+        };
+        SimilarityFinder finder = new SimilarityFinder(mockSearcher);
+
+        // when
+        finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        int actualCountOfFoundElements = mockSearcher.getClass()
+                                                .getDeclaredField("found")
+                                                .getInt(mockSearcher);
+        assertEquals(3, actualCountOfFoundElements);
+    }
 }
