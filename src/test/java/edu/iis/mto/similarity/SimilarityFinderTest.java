@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.sound.midi.Sequence;
+
 class SimilarityFinderTest {
 
     @Test
@@ -140,5 +142,35 @@ class SimilarityFinderTest {
 
         // then
         assertEquals(0.5d, similarity);
+    }
+
+    @Test
+    public void shouldInvokeSearchMethodTwice() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        int[] firstSeq = {12, 13};
+        int[] secondSeq = {15, 12};
+        SearchResult anySearchResult = SearchResult.builder()
+                                                   .withFound(false)
+                                                   .build();
+        SequenceSearcher mockSearcher = new SequenceSearcher() {
+
+            public int invocationCount = 0;
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                ++invocationCount;
+                return anySearchResult;
+            }
+        };
+        SimilarityFinder finder = new SimilarityFinder(mockSearcher);
+
+        // when
+        finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        int actualInvocationCount = mockSearcher.getClass()
+                                                .getDeclaredField("invocationCount")
+                                                .getInt(mockSearcher);
+        assertEquals(2, actualInvocationCount);
     }
 }
