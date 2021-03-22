@@ -57,4 +57,18 @@ class SimilarityFinderTest {
         assertEquals(1.0d, similarity);
     }
 
+    @Test
+    public void shouldReturnZeroWhenFirstSequenceIsEmpty() {
+        // given
+        SimilarityFinder finder = new SimilarityFinder((elem, sequence) -> null);
+        int[] firstSeq = {};
+        int[] secondSeq = {1, 2, 3};
+
+        // when
+        double similarity = finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        assertEquals(0d, similarity);
+    }
+
 }
