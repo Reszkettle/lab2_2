@@ -71,4 +71,20 @@ class SimilarityFinderTest {
         assertEquals(0d, similarity);
     }
 
+    @Test
+    public void shouldReturnZeroWhenSecondSequenceIsEmpty() {
+        // given
+        SimilarityFinder finder = new SimilarityFinder((elem, sequence) -> SearchResult.builder()
+                                                                                       .withFound(false)
+                                                                                       .build());
+        int[] firstSeq = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        int[] secondSeq = {};
+
+        // when
+        double similarity = finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        assertEquals(0d, similarity);
+    }
+
 }
