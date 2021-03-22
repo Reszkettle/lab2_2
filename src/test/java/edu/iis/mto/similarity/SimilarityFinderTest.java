@@ -41,4 +41,20 @@ class SimilarityFinderTest {
         assertEquals(0d, similarity);
     }
 
+    @Test
+    public void shouldReturnOneWhenSequencesContainTheSameNumbersAndAreOfTheSameLength() {
+        // given
+        SimilarityFinder finder = new SimilarityFinder((elem, sequence) -> SearchResult.builder()
+                                                                                       .withFound(true)
+                                                                                       .build());
+        int[] firstSeq = {1, 2, 3};
+        int[] secondSeq = {1, 2, 3};
+
+        // when
+        double similarity = finder.calculateJackardSimilarity(firstSeq, secondSeq);
+
+        // then
+        assertEquals(1.0d, similarity);
+    }
+
 }
